@@ -51,3 +51,5 @@ export const likeBlog = (blog) => {
     dispatch(updateBlog(updatedBlog))
   }
 }
+
+export default blogSlice.reducer;
