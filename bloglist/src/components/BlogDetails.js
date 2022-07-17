@@ -1,11 +1,13 @@
 import { useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { removeBlog, likeBlog } from '../reducers/blogReducer'
+import CommentForm from './CommentForm'
 
 const BlogDetails = ({ blogs, loggedUser }) => {
   const dispatch = useDispatch()
   const id = useParams().id
   const blog = blogs.find((a) => a.id === id)
+  console.log("🚀 ~ file: BlogDetails.js ~ line 10 ~ BlogDetails ~ blog", blog)
 
   const updateLike = async (blog) => {
     dispatch(likeBlog(blog))
@@ -29,11 +31,16 @@ const BlogDetails = ({ blogs, loggedUser }) => {
       </div>
       <div>
         <span>likes: {blog.likes}</span>
-        <button onClick={() => updateLike(blog.id)}>like</button>
+        <button onClick={() => updateLike(blog)}>like</button>
       </div>
       <div>added by {blog.author}</div>
       <h4>comments</h4>
-      <ul>{blog.comments.map(comment => <li>{comment.title}</li>)}</ul>
+      <CommentForm blog={blog} loggedUser={loggedUser}/>
+      <ul>
+        {blog.comments.map((comment) => (
+          <li key={comment.id}>{comment.title}</li>
+        ))}
+      </ul>
       {loggedUser.username === blog.user.username ? (
         <button onClick={() => removeSingleBlog(blog)}>remove</button>
       ) : (

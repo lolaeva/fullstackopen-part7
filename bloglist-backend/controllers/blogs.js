@@ -4,11 +4,10 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const Comment = require("../models/comment");
 
-
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({})
-  .populate("user", { username: 1, name: 1 })
-  .populate("comments", {title: 1, date: 1})
+    .populate("user", { username: 1, name: 1 })
+    .populate("comments", { title: 1, date: 1 });
   response.json(blogs);
 });
 
@@ -36,11 +35,18 @@ blogsRouter.post("/", async (request, response) => {
 
 blogsRouter.put("/:id", async (request, response) => {
   const blog = request.body;
+  console.log("blogsRouter.put ~ blog", blog);
   const blogToUpdate = await Blog.findById(request.params.id);
+  console.log("blogToUpdate", blogToUpdate);
   if (!blogToUpdate) {
     response.status(404).end();
   } else {
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true });
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      request.params.id,
+      { ...blog, user: blog.user.id },
+      { new: true }
+    );
+    console.log("updatedBlog", updatedBlog);
     response.json(updatedBlog);
   }
 });
@@ -55,31 +61,28 @@ blogsRouter.delete("/:id", async (request, response) => {
   }
 });
 
-
 blogsRouter.post("/:id/comments", async (request, response) => {
+  console.log("request.body", request.body);
   if (!request.user) {
     return response.status(401).json({ error: "token missing or invalid" });
   }
   const blogToUpdate = await Blog.findById(request.params.id);
   const comment = new Comment({
     ...request.body,
-    date: new Date,
-    blog: blogToUpdate._id
-  })
-
-  if (!blogToUpdate) {
-    response.status(404).end();
-  } else {
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blogToUpdate, { new: true });
-    response.json(updatedBlog);
-  }
+    date: new Date(),
+    blog: blogToUpdate._id,
+  });
 
   const savedComment = await comment.save();
   blogToUpdate.comments = blogToUpdate.comments.concat(savedComment._id);
   await blogToUpdate.save();
 
-  response.status(201).json(savedComment);
+  if (!blogToUpdate) {
+    response.status(404).end();
+  } else {
+    // const updatedBlog = await Blog.findById(request.params.id);
+    response.status(201).json(savedComment);
+  }
 });
-
 
 module.exports = blogsRouter;

@@ -5,8 +5,8 @@ import Togglable from './Togglable'
 import NewBlogForm from './NewBlogForm'
 import Blog from './Blog'
 
-import { initializeBlogs, createBlog, removeBlog, likeBlog } from '../reducers/blogReducer'
-import { setNotification } from '../reducers/notificationReducer'
+import { createBlog} from '../reducers/blogReducer'
+
 
 import blogService from '../services/blogs'
 
@@ -20,9 +20,7 @@ const Home = ({ loggedUser }) => {
 
   const createNewBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility()
-    const response = await blogService.create(newBlog)
-    dispatch(createBlog(newBlog))
-    dispatch(setNotification(`${response.title} by ${response.author} added`, 5))
+    dispatch(createBlog(newBlog, loggedUser))    
   }
 
   
