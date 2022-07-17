@@ -3,11 +3,13 @@ import { useDispatch } from 'react-redux'
 import { removeBlog, likeBlog } from '../reducers/blogReducer'
 import CommentForm from './CommentForm'
 
+import { Button } from '@mui/material'
+import ThumbUpIcon from '@mui/icons-material/ThumbUp'
+
 const BlogDetails = ({ blogs, loggedUser }) => {
   const dispatch = useDispatch()
   const id = useParams().id
   const blog = blogs.find((a) => a.id === id)
-  console.log("🚀 ~ file: BlogDetails.js ~ line 10 ~ BlogDetails ~ blog", blog)
 
   const updateLike = async (blog) => {
     dispatch(likeBlog(blog))
@@ -25,27 +27,40 @@ const BlogDetails = ({ blogs, loggedUser }) => {
 
   return (
     <>
+      <div className='blog-detail-header'>
       <h2>{blog.title}</h2>
+      {loggedUser.username === blog.user.username ? (
+        <Button onClick={() => removeSingleBlog(blog)} variant="outlined" size="small">
+          remove
+        </Button>
+      ) : (
+        <></>
+      )}
+      </div>
       <div>
         <a href={blog.url}>url</a>
       </div>
+      <br />
       <div>
-        <span>likes: {blog.likes}</span>
-        <button onClick={() => updateLike(blog)}>like</button>
+        <span>likes: {blog.likes} </span>
+        <Button
+          onClick={() => updateLike(blog)}
+          variant="outlined"
+          size="small"
+          startIcon={<ThumbUpIcon />}>
+          like
+        </Button>
       </div>
+      <br />
       <div>added by {blog.author}</div>
       <h4>comments</h4>
-      <CommentForm blog={blog} loggedUser={loggedUser}/>
       <ul>
         {blog.comments.map((comment) => (
           <li key={comment.id}>{comment.title}</li>
         ))}
       </ul>
-      {loggedUser.username === blog.user.username ? (
-        <button onClick={() => removeSingleBlog(blog)}>remove</button>
-      ) : (
-        <></>
-      )}
+      <CommentForm blog={blog} loggedUser={loggedUser} />
+      
     </>
   )
 }

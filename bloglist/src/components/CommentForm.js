@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import blogService from '../services/blogs'
 import { commentBlog } from '../reducers/blogReducer'
 
-const CommentForm = ({blog, loggedUser}) => {
+import { Button, TextField } from '@mui/material'
+
+const CommentForm = ({ blog, loggedUser }) => {
   const [comment, setComment] = useState('')
   const dispatch = useDispatch()
 
@@ -19,13 +20,16 @@ const CommentForm = ({blog, loggedUser}) => {
   }
   return (
     <form onSubmit={addComment}>
-      <input
+      <TextField
         type="text"
         value={comment}
         name="Comment"
         onChange={({ target }) => setComment(target.value)}
       />
-      <button type="submit">add comment</button>
+      <br />
+      <Button type="submit" variant="contained" size="small">
+        add comment
+      </Button>
     </form>
   )
 }

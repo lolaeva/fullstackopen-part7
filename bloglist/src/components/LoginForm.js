@@ -3,7 +3,8 @@ import { setUser } from '../reducers/loggedUserReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
 import loginService from '../services/loginService'
-import blogService from '../services/blogs'
+
+import { Button, TextField } from '@mui/material'
 
 const LoginForm = ({ username, password, setUsername, setPassword }) => {
   const dispatch = useDispatch()
@@ -27,8 +28,9 @@ const LoginForm = ({ username, password, setUsername, setPassword }) => {
     <form onSubmit={handleLogin}>
       <div>
         username
-        <input
+        <TextField
           type="text"
+          size="small"
           value={username}
           name="Username"
           onChange={({ target }) => setUsername(target.value)}
@@ -36,14 +38,17 @@ const LoginForm = ({ username, password, setUsername, setPassword }) => {
       </div>
       <div>
         password
-        <input
+        <TextField
           type="password"
+          size="small"
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button type="submit">login</button>
+      <Button type="submit" variant="contained" size="small">
+        login
+      </Button>
     </form>
   )
 }

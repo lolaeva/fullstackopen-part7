@@ -44,6 +44,12 @@ button {
   justify-content: space-between;
 }
 
+.blog-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .notification {
   padding: 5px;
   margin: 7px auto;

@@ -1,30 +1,26 @@
+import { Container } from '@mui/material'
+
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import Home from './components/Home'
+import Blogs from './components/Blogs'
 import UsersList from './components/UsersList'
 import UserDetails from './components/UserDetails'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
-import Blog from './components/Blog'
 import BlogDetails from './components/BlogDetails'
 
 import { initializeBlogs } from './reducers/blogReducer'
-import { setNotification } from './reducers/notificationReducer'
 import { logOutUser } from './reducers/loggedUserReducer'
 
 import userService from './services/users'
 
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useParams,
-  useNavigate
-} from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
+
 import NavBar from './components/Navbar'
 
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles'
+import { orange } from '@mui/material/colors'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -62,32 +58,46 @@ const App = () => {
     navigate('/')
   }
 
-  
+  let theme = createTheme({
+    palette: {
+      primary: {
+        main: '#0f1114'
+      },
+      secondary: {
+        main: '#edf2ff'
+      }
+    }
+  })
 
   return (
-    <div>
-      <Notification message={notification} />
+    <ThemeProvider theme={theme}>
+      <Container>
+        <Notification message={notification} />
 
-      {loggedUser ? (
-        <NavBar loggedUser={loggedUser} handleLogout={handleLogout}></NavBar>
-      ) : (
-        <>
-          <h2>login to app</h2>
-          <LoginForm
-            username={username}
-            password={password}
-            setUsername={setUsername}
-            setPassword={setPassword}
+        {loggedUser ? (
+          <NavBar loggedUser={loggedUser} handleLogout={handleLogout}></NavBar>
+        ) : (
+          <>
+            <h2>login to app</h2>
+            <LoginForm
+              username={username}
+              password={password}
+              setUsername={setUsername}
+              setPassword={setPassword}
+            />
+          </>
+        )}
+        <Routes>
+          <Route path="/" element={<Blogs loggedUser={loggedUser} />} />
+          <Route
+            path="/blogs/:id"
+            element={<BlogDetails blogs={blogs} loggedUser={loggedUser} />}
           />
-        </>
-      )}
-      <Routes>
-        <Route path="/" element={<Home loggedUser={loggedUser} />} />
-        <Route path="/blogs/:id" element={<BlogDetails blogs={blogs} loggedUser={loggedUser} />} />
-        <Route path="/users" element={<UsersList users={users} />} />
-        <Route path="/users/:id" element={<UserDetails users={users} />} />
-      </Routes>
-    </div>
+          <Route path="/users" element={<UsersList users={users} />} />
+          <Route path="/users/:id" element={<UserDetails users={users} />} />
+        </Routes>
+      </Container>
+    </ThemeProvider>
   )
 }
 

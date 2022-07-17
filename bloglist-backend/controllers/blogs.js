@@ -35,9 +35,7 @@ blogsRouter.post("/", async (request, response) => {
 
 blogsRouter.put("/:id", async (request, response) => {
   const blog = request.body;
-  console.log("blogsRouter.put ~ blog", blog);
   const blogToUpdate = await Blog.findById(request.params.id);
-  console.log("blogToUpdate", blogToUpdate);
   if (!blogToUpdate) {
     response.status(404).end();
   } else {
@@ -46,7 +44,6 @@ blogsRouter.put("/:id", async (request, response) => {
       { ...blog, user: blog.user.id },
       { new: true }
     );
-    console.log("updatedBlog", updatedBlog);
     response.json(updatedBlog);
   }
 });
