@@ -1,29 +1,15 @@
-import { useState } from 'react'
-import BlogDetails from './BlogDetails'
+import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, updateLike, removeBlog }) => {
-  const [visible, setVisible] = useState(false)
-
-  const handleLike = (blog) => {
-    updateLike(blog)
-  }
-  const handleDelete = (blog) => {
-    removeBlog(blog)
-  }
-
+const Blog = ({ blog }) => {
   return (
     <div className="blog-item">
       <div className="blog-item-main">
-        <span>{blog.title}</span>
-        <span>{blog.author}</span>
-        <button onClick={() => setVisible(!visible)}>{visible ? 'hide' : 'view'}</button>
+        <Link to={`/blogs/${blog.id}`}>
+          <span>{blog.title}</span>
+          <span>{blog.author}</span>
+        </Link>
       </div>
-      <BlogDetails
-        blog={blog}
-        handleLike={handleLike}
-        handleDelete={handleDelete}
-        visible={visible}
-      />
+
     </div>
   )
 }

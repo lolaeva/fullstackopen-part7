@@ -1,115 +1,92 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import Blog from './components/Blog'
+import Home from './components/Home'
+import UsersList from './components/UsersList'
+import UserDetails from './components/UserDetails'
 import LoginForm from './components/LoginForm'
-import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
+import Blog from './components/Blog'
+import BlogDetails from './components/BlogDetails'
 
-import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/blogReducer'
+import { initializeBlogs } from './reducers/blogReducer'
 import { setNotification } from './reducers/notificationReducer'
-import { logOutUser, setUpdatedUser } from './reducers/userReducer'
+import { logOutUser } from './reducers/loggedUserReducer'
 
-import blogService from './services/blogs'
+import userService from './services/users'
+
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useParams,
+  useNavigate
+} from 'react-router-dom'
+import NavBar from './components/Navbar'
+
 
 const App = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  const [users, setUsers] = useState([])
+
+  const loggedUser = useSelector(({ loggedUser }) => {
+    return loggedUser
+  })
   const blogs = useSelector(({ blogs }) => {
     return blogs
-  })
-  const user = useSelector(({ user }) => {
-    return user
   })
   const notification = useSelector(({ notification }) => {
     return notification
   })
 
-  const blogFormRef = useRef()
+  useEffect(() => {
+    userService.getAll().then((result) => {
+      setUsers(result)
+    })
+  }, [dispatch])
 
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    try {
-      dispatch(setUpdatedUser(username, password))
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      dispatch(setNotification('Wrong username or password', 5))
-    }
-  }
-
   const handleLogout = () => {
     dispatch(logOutUser())
     setUsername('')
     setPassword('')
+    navigate('/')
   }
 
-  const createNewBlog = async (newBlog) => {
-    blogFormRef.current.toggleVisibility()
-    const response = await blogService.create(newBlog)
-    dispatch(createBlog(newBlog))
-    dispatch(setNotification(`${response.title} by ${response.author} added`, 5))
-  }
-
-  const updateLike = async (blog) => {
-    dispatch(likeBlog(blog))
-  }
-
-  const removeSingleBlog = async (blogToRemove) => {
-    const ok = window.confirm(`remove '${blogToRemove.title}' by ${blogToRemove.author}?`)
-    if (!ok) {
-      return
-    }
-    dispatch(removeBlog(blogToRemove.id))
-  }
+  
 
   return (
     <div>
-      {user ? (
-        <>
-          <h2>blogs</h2>
-          <Notification message={notification} />
-          <div>
-            <span>{user.username} logged in</span>
-            <button onClick={handleLogout}>logout</button>
-            <br />
-          </div>
-          <div>
-            <h2>Create new</h2>
-            <Togglable buttonLabel="new blog" ref={blogFormRef}>
-              <NewBlogForm onCreate={createNewBlog} />
-            </Togglable>
-          </div>
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              updateLike={updateLike}
-              removeSingleBlog={removeSingleBlog}
-            />
-          ))}
-        </>
+      <Notification message={notification} />
+
+      {loggedUser ? (
+        <NavBar loggedUser={loggedUser} handleLogout={handleLogout}></NavBar>
       ) : (
         <>
           <h2>login to app</h2>
-          <Notification message={notification} />
           <LoginForm
             username={username}
             password={password}
             setUsername={setUsername}
             setPassword={setPassword}
-            handleLogin={handleLogin}
           />
         </>
       )}
+      <Routes>
+        <Route path="/" element={<Home loggedUser={loggedUser} />} />
+        <Route path="/blogs/:id" element={<BlogDetails blogs={blogs} loggedUser={loggedUser} />} />
+        <Route path="/users" element={<UsersList users={users} />} />
+        <Route path="/users/:id" element={<UserDetails users={users} />} />
+      </Routes>
     </div>
   )
 }
