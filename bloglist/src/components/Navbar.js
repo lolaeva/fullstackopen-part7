@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import { Button } from '@mui/material'
-import Typography from '@mui/material/Typography'
 
 const NavBar = ({ loggedUser, handleLogout }) => {
   return (

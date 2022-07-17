@@ -19,8 +19,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom'
 
 import NavBar from './components/Navbar'
 
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles'
-import { orange } from '@mui/material/colors'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 
 const App = () => {
   const dispatch = useDispatch()
