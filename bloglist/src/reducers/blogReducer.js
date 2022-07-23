@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, current } from '@reduxjs/toolkit'
 import blogService from '../services/blogs'
 
 import { setNotification } from './notificationReducer'
@@ -16,8 +16,8 @@ const blogSlice = createSlice({
       state.push(action.payload)
     },
     updateBlog(state, action) {
-      state.map((blog) => (blog.id !== action.payload.id ? blog : action.payload))
-      console.log(state)
+      let idx = state.findIndex(blog => blog.id === action.payload.id)
+      state[idx] = action.payload
     },
     deleteBlog(state, action) {
       state.filter((blog) => blog.id !== action.payload.id)
@@ -62,11 +62,14 @@ export const commentBlog = (data, blog) => {
 
     const updatedBlog = {
       ...blog,
-      comments: blog.comments.concat({
+      comments: [
+        ...blog.comments, 
+        {
         title: response.title,
         id: response.id,
         date: response.date
-      })
+        }
+      ]
     }
     dispatch(updateBlog(updatedBlog))
   }

@@ -76,7 +76,7 @@ const App = () => {
         {loggedUser ? (
           <NavBar loggedUser={loggedUser} handleLogout={handleLogout}></NavBar>
         ) : (
-          <>
+          <div className="login-form">
             <h2>login to app</h2>
             <LoginForm
               username={username}
@@ -84,7 +84,7 @@ const App = () => {
               setUsername={setUsername}
               setPassword={setPassword}
             />
-          </>
+          </div>
         )}
         <Routes>
           <Route path="/" element={<Blogs loggedUser={loggedUser} />} />

@@ -39,11 +39,14 @@ blogsRouter.put("/:id", async (request, response) => {
   if (!blogToUpdate) {
     response.status(404).end();
   } else {
-    const updatedBlog = await Blog.findByIdAndUpdate(
-      request.params.id,
-      { ...blog, user: blog.user.id },
-      { new: true }
-    );
+    const data = {
+      title: blog.title,
+      url: blog.url,
+      likes: blog.likes,
+      author: blog.author,
+      user: blog.user.id,
+    };
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, data, { new: true });
     response.json(updatedBlog);
   }
 });
@@ -59,7 +62,6 @@ blogsRouter.delete("/:id", async (request, response) => {
 });
 
 blogsRouter.post("/:id/comments", async (request, response) => {
-  console.log("request.body", request.body);
   if (!request.user) {
     return response.status(401).json({ error: "token missing or invalid" });
   }

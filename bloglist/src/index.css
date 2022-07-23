@@ -68,3 +68,11 @@ button {
   border-color: rgb(192, 59, 93);
   color: rgb(192, 59, 93);
 }
+
+.login-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
